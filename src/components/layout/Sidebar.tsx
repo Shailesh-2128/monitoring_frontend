@@ -16,13 +16,13 @@ import {
   Eye,
   Send
 } from 'lucide-react'
-import { Github } from '../icons/Github'
+import { Github } from '../common/GithubIcon'
 import { Server } from '../../types/server'
 import { Website } from '../../types/website'
 import { Database } from '../../types/database'
 import { GitHubProject } from '../../types/github'
 import { AWSAccount } from '../../types/aws'
-import { useAuth } from '../../context/AuthContext'
+import { useAuth } from '../../hooks/useAuth'
 import { UserProfileModal } from '../../features/iam/components/UserProfileModal'
 
 export type TabType = 'servers' | 'websites' | 'databases' | 'github' | 'aws' | 'aws-costing' | 'telegram' | 'iam'
@@ -58,11 +58,11 @@ export const Sidebar: React.FC<SidebarProps> = (props) => {
       {/* Mobile Top Header */}
       <header className="lg:hidden h-14 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 flex items-center justify-between shrink-0 font-sans z-40">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-600/30">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center text-white shadow-md shadow-orange-500/25">
             <Activity className="w-4 h-4" />
           </div>
           <span className="font-extrabold text-base text-slate-900 dark:text-white tracking-tight">
-            DeployOps
+            MonitorDep
           </span>
         </div>
 
@@ -87,10 +87,10 @@ export const Sidebar: React.FC<SidebarProps> = (props) => {
           >
             <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center text-white">
+                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center text-white">
                   <Activity className="w-4 h-4" />
                 </div>
-                <span className="font-bold text-base text-slate-900 dark:text-white">DeployOps</span>
+                <span className="font-bold text-base text-slate-900 dark:text-white">MonitorDep</span>
               </div>
               <button
                 onClick={() => setMobileOpen(false)}
@@ -256,12 +256,12 @@ const SidebarNavItems: React.FC<SidebarProps & { closeMobile?: () => void }> = (
       {/* Brand Header */}
       <div className="p-4 border-b border-slate-200 dark:border-slate-850 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-600/30">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center text-white shadow-md shadow-orange-500/25">
             <Activity className="w-5 h-5" />
           </div>
           <div>
             <h1 className="font-extrabold text-base leading-tight tracking-tight text-slate-900 dark:text-white">
-              DeployOps
+              MonitorDep
             </h1>
             <span className="text-[10px] text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-widest">
               Monitoring Suite

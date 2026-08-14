@@ -67,6 +67,7 @@ export interface CloudInfrastructureMetrics {
   provider: 'Supabase' | 'Neon' | string
   status?: string
   error?: string
+  supabase_url?: string
   cpu_usage_percent?: number
   ram_used_bytes?: number
   ram_total_bytes?: number

@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { useAuth } from '../../../context/AuthContext'
+import { useAuth } from '../../../hooks/useAuth'
+import { API_BASE } from '../../../config'
 import {
   FileText, RefreshCw, Search, ShieldCheck, User, Calendar,
   Clock, Filter, Server, Globe, Database, GitBranch, Cloud, DollarSign, Activity
 } from 'lucide-react'
-
-const API_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:8000').replace(/\/$/, '')
 
 export interface AuditLogItem {
   id: number

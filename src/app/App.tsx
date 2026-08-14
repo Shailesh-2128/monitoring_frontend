@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, lazy, Suspense } from 'react'
 
 // Context & Skeleton Loaders
-import { ThemeProvider } from '../context/ThemeContext'
+import { ThemeProvider } from '../features/settings/ThemeContext'
 import { DetailsSkeleton } from '../components/common/SkeletonLoaders'
 
 // Layout Components
@@ -55,17 +55,16 @@ import {
 } from '../types/aws'
 
 // Auth & IAM Components
-import { AuthProvider, useAuth } from '../context/AuthContext'
-import { LoginPage } from '../features/iam/LoginPage'
+import { AuthProvider } from '../features/auth/AuthContext'
+import { useAuth } from '../hooks/useAuth'
+import { LoginPage } from '../pages/LoginPage'
 import { UserManagement } from '../features/iam/UserManagement'
 import { TabType } from '../components/layout/Sidebar'
 import { ServerDocModal } from '../features/servers/components/ServerDocModal'
-
-// Determine Backend URL
-const API_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:8000').replace(/\/$/, '')
+import { API_BASE } from '../config'
 
 function App() {
-  const { token } = useAuth()
+  const { token, logout } = useAuth()
   const [activeTab, setActiveTab] = useState<TabType>('servers')
   const [isServerDocOpen, setIsServerDocOpen] = useState(false)
 
@@ -78,14 +77,22 @@ function App() {
       headers['Authorization'] = `Bearer ${token}`
     }
     const res = await fetch(url, { ...options, headers })
+
+    if (res.status === 401) {
+      logout()
+      throw new Error('Authentication required')
+    }
+
     if (res.status === 403) {
       const errData = await res.json().catch(() => ({}))
       const msg = errData.detail || errData.message || 'Permission Denied: You have Read-Only access mode for this module.'
-      alert(msg)
+      if (options.method && options.method.toUpperCase() !== 'GET') {
+        alert(msg)
+      }
       throw new Error(msg)
     }
     return res
-  }, [token])
+  }, [token, logout])
 
   // Servers lists states
   const [servers, setServers] = useState<Server[]>([])
@@ -486,7 +493,8 @@ function App() {
   }, [fetchWebsiteDetail, fetchWebsiteHistory])
 
   // Fetch all databases list
-  const fetchDatabases = useCallback(async () => {
+  const fetchDatabases = useCallback(async (showIndicator = false) => {
+    if (showIndicator) setIsRefreshing(true)
     try {
       const res = await authFetch(`${API_BASE}/api/databases/`)
       if (res.ok) {
@@ -497,6 +505,7 @@ function App() {
       console.error('Error fetching databases:', err)
     } finally {
       setLoadingDatabases(false)
+      setIsRefreshing(false)
     }
   }, [authFetch])
 
@@ -771,15 +780,17 @@ function App() {
 
   // Initial loads on mount
   useEffect(() => {
+    if (!token) return
     fetchServers(false)
     fetchWebsites(false)
     fetchDatabases(false)
     fetchGithubProjects(false)
     fetchAWSAccounts(false)
-  }, [])
+  }, [token, fetchServers, fetchWebsites, fetchDatabases, fetchGithubProjects, fetchAWSAccounts])
 
   // React to selecting server
   useEffect(() => {
+    if (!token) return
     if (activeTab === 'servers') {
       if (selectedServerId !== null) {
         refreshActiveServer(selectedServerId, timeRange)
@@ -788,10 +799,11 @@ function App() {
         setHistory([])
       }
     }
-  }, [activeTab, selectedServerId, timeRange, refreshActiveServer])
+  }, [token, activeTab, selectedServerId, timeRange, refreshActiveServer])
 
   // React to selecting website
   useEffect(() => {
+    if (!token) return
     if (activeTab === 'websites') {
       if (selectedWebsiteId !== null) {
         refreshActiveWebsite(selectedWebsiteId, timeRange)
@@ -800,10 +812,11 @@ function App() {
         setWebsiteHistory([])
       }
     }
-  }, [activeTab, selectedWebsiteId, timeRange, refreshActiveWebsite])
+  }, [token, activeTab, selectedWebsiteId, timeRange, refreshActiveWebsite])
 
   // React to selecting database
   useEffect(() => {
+    if (!token) return
     if (activeTab === 'databases') {
       if (selectedDatabaseId !== null) {
         refreshActiveDatabase(selectedDatabaseId, timeRange)
@@ -812,10 +825,11 @@ function App() {
         setDatabaseHistory([])
       }
     }
-  }, [activeTab, selectedDatabaseId, timeRange, refreshActiveDatabase])
+  }, [token, activeTab, selectedDatabaseId, timeRange, refreshActiveDatabase])
 
   // React to selecting GitHub project
   useEffect(() => {
+    if (!token) return
     if (activeTab === 'github') {
       if (selectedGithubProjectId !== null) {
         fetchGithubProjectDetails(selectedGithubProjectId)
@@ -829,10 +843,11 @@ function App() {
         setReleases(null)
       }
     }
-  }, [activeTab, selectedGithubProjectId, fetchGithubProjectDetails])
+  }, [token, activeTab, selectedGithubProjectId, fetchGithubProjectDetails])
 
   // React to selecting AWS account
   useEffect(() => {
+    if (!token) return
     if (activeTab === 'aws') {
       if (selectedAWSAccountId !== null) {
         fetchAWSAccountOverview(selectedAWSAccountId)
@@ -840,18 +855,19 @@ function App() {
         setSelectedAWSOverview(null)
       }
     }
-  }, [activeTab, selectedAWSAccountId, fetchAWSAccountOverview])
+  }, [token, activeTab, selectedAWSAccountId, fetchAWSAccountOverview])
 
   // React to selecting AWS Costing
   useEffect(() => {
+    if (!token) return
     if (activeTab === 'aws-costing') {
       fetchAWSCostingData(selectedAWSAccountId || undefined)
     }
-  }, [activeTab, selectedAWSAccountId, fetchAWSCostingData])
+  }, [token, activeTab, selectedAWSAccountId, fetchAWSCostingData])
 
   // Polling loop (every 15s)
   useEffect(() => {
-    if (!autoRefresh) return
+    if (!token || !autoRefresh) return
     const timer = setInterval(() => {
       if (activeTab === 'servers') {
         fetchServers(false)
@@ -885,6 +901,7 @@ function App() {
     }, 15000)
     return () => clearInterval(timer)
   }, [
+    token,
     autoRefresh,
     activeTab,
     selectedServerId,
@@ -1598,33 +1615,25 @@ function App() {
 
 function MainContent() {
   const { isAuthenticated, isLoading } = useAuth()
-  const [hasVisited, setHasVisited] = useState<boolean>(() => {
-    return localStorage.getItem('deployops_has_visited') === 'true'
-  })
 
-  useEffect(() => {
-    if (!isLoading && isAuthenticated) {
-      localStorage.setItem('deployops_has_visited', 'true')
-      setHasVisited(true)
-    }
-  }, [isLoading, isAuthenticated])
-
-  // Show full screen loader only when visiting for the FIRST TIME
-  if (isLoading && !hasVisited) {
+  // 1. While verifying session token with backend, show full-screen loader
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-slate-400 font-sans">
         <div className="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mb-4 shadow-lg shadow-indigo-500/20" />
         <span className="text-sm font-semibold tracking-wider uppercase text-slate-300">
-          Loading Infrastructure Suite...
+          Authenticating & Verifying Session...
         </span>
       </div>
     )
   }
 
-  if (!isAuthenticated && !isLoading) {
+  // 2. Render Login page if not authenticated
+  if (!isAuthenticated) {
     return <LoginPage />
   }
 
+  // 3. Render Dashboard ONLY when session is fully verified & user is authenticated
   return <App />
 }
 

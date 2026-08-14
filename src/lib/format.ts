@@ -1,0 +1,42 @@
+export const formatBytes = (bytes: number, decimals = 2) => {
+  if (bytes === 0) return '0 Bytes'
+  const k = 1024
+  const dm = decimals < 0 ? 0 : decimals
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB']
+  const i = Math.floor(Math.log(bytes) / Math.log(k))
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i]
+}
+
+export const formatSpeed = (bytesPerSec: number) => {
+  const kb = 1024
+  const mb = kb * 1024
+  if (bytesPerSec >= mb) {
+    return `${(bytesPerSec / mb).toFixed(1)} MB/s`
+  }
+  if (bytesPerSec >= kb) {
+    return `${(bytesPerSec / kb).toFixed(1)} KB/s`
+  }
+  return `${bytesPerSec} B/s`
+}
+
+export const formatUptime = (seconds: number) => {
+  const d = Math.floor(seconds / (3600 * 24))
+  const h = Math.floor((seconds % (3600 * 24)) / 3600)
+  const m = Math.floor((seconds % 3600) / 60)
+  
+  const parts = []
+  if (d > 0) parts.push(`${d}d`)
+  if (h > 0) parts.push(`${h}h`)
+  if (m > 0 || parts.length === 0) parts.push(`${m}m`)
+  
+  return parts.join(' ')
+}
+
+export const formatTimeLabel = (isoString: string) => {
+  try {
+    const d = new Date(isoString)
+    return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+  } catch {
+    return ''
+  }
+}

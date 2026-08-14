@@ -267,6 +267,7 @@ export const AddDatabaseModal: React.FC<AddDatabaseModalProps> = ({
                   className="px-4 py-2.5 bg-slate-50 dark:bg-slate-950 disabled:opacity-40 border border-slate-200 dark:border-slate-800 rounded-xl text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-all"
                 />
               </div>
+            </div>
           </div>
 
           {/* Form Actions */}

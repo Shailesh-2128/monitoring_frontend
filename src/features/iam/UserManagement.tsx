@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { useAuth } from '../../context/AuthContext'
+import { useAuth } from '../../hooks/useAuth'
+import { API_BASE } from '../../config'
 import { User, Role, Team } from '../../types/iam'
 import { UsersTab } from './components/UsersTab'
 import { TeamsTab } from './components/TeamsTab'
@@ -10,8 +11,6 @@ import { CreateTeamModal } from './components/CreateTeamModal'
 import { CreateRoleModal } from './components/CreateRoleModal'
 import { UserDetailsModal } from './components/UserDetailsModal'
 import { ShieldCheck, Users, Shield, RefreshCw, AlertTriangle, UserCheck, Activity } from 'lucide-react'
-
-const API_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:8000').replace(/\/$/, '')
 
 export const UserManagement: React.FC = () => {
   const { token, hasPermission } = useAuth()

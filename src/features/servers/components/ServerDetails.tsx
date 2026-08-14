@@ -1,10 +1,9 @@
 import React from 'react'
 import { Database, Cpu, HardDrive, Network, Terminal, Check, Copy } from 'lucide-react'
 import { DetailedServer, MetricHistoryPoint } from '../../../types/server'
-import { formatBytes, formatSpeed, formatUptime } from '../../../utils/format'
-import { ServerHistoryChart } from '../../../components/charts/LineChart'
-
-const API_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:8000').replace(/\/$/, '')
+import { formatBytes, formatSpeed, formatUptime } from '../../../lib/format'
+import { ServerHistoryChart } from '../../../components/common/LineChart'
+import { API_BASE } from '../../../config'
 
 interface ServerDetailsProps {
   serverDetail: DetailedServer | null
@@ -68,20 +67,20 @@ export const ServerDetails: React.FC<ServerDetailsProps> = ({
   return (
     <div className="space-y-8 max-w-7xl mx-auto animate-fadeIn font-sans text-slate-900 dark:text-slate-100 pb-12">
       {/* Row 1: Hardware Summary Specification Sheet */}
-      <section className="bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
-        <div className="flex items-center justify-between mb-4">
+      <section className="bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 sm:p-6 shadow-sm">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
           <h3 className="text-xs font-bold text-slate-500 dark:text-slate-400 tracking-wider uppercase flex items-center gap-2">
-            <Database className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-            System Specifications & Node Metadata
+            <Database className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" />
+            <span>System Specifications & Node Metadata</span>
           </h3>
 
-          <div className="flex items-center gap-3">
-            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
+          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono break-all">
               Token: <span className="text-slate-800 dark:text-slate-200 select-all font-semibold">{serverDetail.token.substring(0, 8)}...</span>
             </span>
             <button
               onClick={() => copyToClipboard(serverDetail.token, setCopiedToken)}
-              className="p-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-all flex items-center gap-1 text-xs"
+              className="p-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-all flex items-center gap-1 text-xs shrink-0"
               title="Copy Token"
             >
               {copiedToken ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
@@ -89,8 +88,8 @@ export const ServerDetails: React.FC<ServerDetailsProps> = ({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
-          <div className="flex flex-col bg-slate-50 dark:bg-slate-950/50 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
+          <div className="flex flex-col bg-slate-50 dark:bg-slate-950/50 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 min-w-0">
             <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold mb-1">Operating System</span>
             <span className="text-xs font-extrabold text-slate-800 dark:text-slate-200 truncate" title={serverDetail.os}>
               {serverDetail.os || 'Ubuntu'}
@@ -100,32 +99,32 @@ export const ServerDetails: React.FC<ServerDetailsProps> = ({
             </span>
           </div>
 
-          <div className="flex flex-col bg-slate-50 dark:bg-slate-950/50 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
+          <div className="flex flex-col bg-slate-50 dark:bg-slate-950/50 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 min-w-0">
             <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold mb-1">CPU Model</span>
             <span className="text-xs font-extrabold text-slate-800 dark:text-slate-200 truncate" title={serverDetail.cpu_model}>
               {serverDetail.cpu_model || 'Waiting for agent...'}
             </span>
-            <span className="text-[10px] text-slate-400 dark:text-slate-500 mt-1">
+            <span className="text-[10px] text-slate-400 dark:text-slate-500 mt-1 truncate">
               Processor Core Specs
             </span>
           </div>
 
-          <div className="flex flex-col bg-slate-50 dark:bg-slate-950/50 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
+          <div className="flex flex-col bg-slate-50 dark:bg-slate-950/50 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 min-w-0">
             <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold mb-1">System Memory</span>
-            <span className="text-xs font-extrabold text-slate-800 dark:text-slate-200">
+            <span className="text-xs font-extrabold text-slate-800 dark:text-slate-200 truncate">
               {serverDetail.total_ram > 0 ? formatBytes(serverDetail.total_ram) : 'Waiting for report...'}
             </span>
-            <span className="text-[10px] text-slate-400 dark:text-slate-500 mt-1">
+            <span className="text-[10px] text-slate-400 dark:text-slate-500 mt-1 truncate">
               Total RAM capacity
             </span>
           </div>
 
-          <div className="flex flex-col bg-slate-50 dark:bg-slate-950/50 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
+          <div className="flex flex-col bg-slate-50 dark:bg-slate-950/50 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 min-w-0">
             <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold mb-1">Hard Disk Storage</span>
-            <span className="text-xs font-extrabold text-slate-800 dark:text-slate-200">
+            <span className="text-xs font-extrabold text-slate-800 dark:text-slate-200 truncate">
               {serverDetail.total_disk > 0 ? formatBytes(serverDetail.total_disk) : 'Waiting for report...'}
             </span>
-            <span className="text-[10px] text-slate-400 dark:text-slate-500 mt-1">
+            <span className="text-[10px] text-slate-400 dark:text-slate-500 mt-1 truncate">
               Total Disk capacity
             </span>
           </div>
@@ -221,22 +220,22 @@ export const ServerDetails: React.FC<ServerDetailsProps> = ({
               Diagnostic Parameters
             </h4>
 
-            <div className="space-y-4">
-              <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5">
+            <div className="space-y-3 sm:space-y-4">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5 gap-1 sm:gap-0">
                 <span className="text-[11px] text-slate-500 dark:text-slate-400 uppercase font-semibold">Uptime</span>
                 <span className="text-xs font-bold text-slate-800 dark:text-slate-200 font-mono">
                   {hasReading ? formatUptime(uptimeVal) : 'Waiting...'}
                 </span>
               </div>
-              <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5 gap-1 sm:gap-0">
                 <span className="text-[11px] text-slate-500 dark:text-slate-400 uppercase font-semibold">Load Avg (1m/5m/15m)</span>
-                <span className="text-xs font-mono font-bold text-slate-800 dark:text-slate-200">
+                <span className="text-xs font-mono font-bold text-slate-800 dark:text-slate-200 break-all">
                   {hasReading && serverDetail.latest_reading?.load_average_1m !== undefined
                     ? `${serverDetail.latest_reading.load_average_1m.toFixed(2)} / ${serverDetail.latest_reading.load_average_5m.toFixed(2)} / ${serverDetail.latest_reading.load_average_15m.toFixed(2)}`
                     : 'Waiting...'}
                 </span>
               </div>
-              <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5 gap-1 sm:gap-0">
                 <span className="text-[11px] text-slate-500 dark:text-slate-400 uppercase font-semibold">Swap Memory Space</span>
                 <span className="text-xs font-bold text-slate-800 dark:text-slate-200 font-mono">
                   {hasReading && serverDetail.latest_reading?.swap_percent !== undefined
@@ -244,10 +243,10 @@ export const ServerDetails: React.FC<ServerDetailsProps> = ({
                     : 'Waiting...'}
                 </span>
               </div>
-              <div className="flex items-center justify-between pb-1">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-1 gap-1 sm:gap-0">
                 <span className="text-[11px] text-slate-500 dark:text-slate-400 uppercase font-semibold">Network Speed (Up/Down)</span>
-                <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 flex items-center gap-1 font-mono">
-                  <Network className="w-3.5 h-3.5" />
+                <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 flex items-center gap-1 font-mono break-all">
+                  <Network className="w-3.5 h-3.5 shrink-0" />
                   {hasReading
                     ? `${formatSpeed(serverDetail.latest_reading!.network_upload)} / ${formatSpeed(serverDetail.latest_reading!.network_download)}`
                     : 'Waiting...'}
@@ -272,7 +271,7 @@ export const ServerDetails: React.FC<ServerDetailsProps> = ({
           System Services Health Monitor
         </h3>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
           {/* Nginx */}
           <div className="flex items-center justify-between bg-slate-50 dark:bg-slate-950/50 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
             <div className="flex flex-col">
@@ -405,14 +404,14 @@ export const ServerDetails: React.FC<ServerDetailsProps> = ({
         ) : (
           <div className="flex flex-col space-y-4 animate-fadeIn">
             {/* Console Top Control Bar */}
-            <div className="flex flex-wrap items-center justify-between gap-4 bg-slate-50 dark:bg-slate-950/60 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
-              <div className="flex flex-wrap items-center gap-3">
+            <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center justify-between gap-4 bg-slate-50 dark:bg-slate-950/60 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full sm:w-auto">
                 <div className="flex flex-col">
                   <label className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase mb-1">Source</label>
                   <select
                     value={logType}
                     onChange={(e) => setLogType(e.target.value as any)}
-                    className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-indigo-500"
+                    className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-indigo-500 w-full"
                   >
                     <option value="django">Django (Agent)</option>
                     <option value="gunicorn">Gunicorn</option>
@@ -427,7 +426,7 @@ export const ServerDetails: React.FC<ServerDetailsProps> = ({
                   <select
                     value={logLevel}
                     onChange={(e) => setLogLevel(e.target.value)}
-                    className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-indigo-500"
+                    className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-indigo-500 w-full"
                   >
                     <option value="">All Levels</option>
                     <option value="INFO">INFO</option>
@@ -444,7 +443,7 @@ export const ServerDetails: React.FC<ServerDetailsProps> = ({
                     placeholder="Search message text..."
                     value={logSearch}
                     onChange={(e) => setLogSearch(e.target.value)}
-                    className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-indigo-500 placeholder-slate-400 dark:placeholder-slate-500 w-48 sm:w-64"
+                    className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-indigo-500 placeholder-slate-400 dark:placeholder-slate-500 w-full"
                   />
                 </div>
               </div>

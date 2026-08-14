@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import {
   BookOpen, X, Copy, Check, Terminal, Cpu, HardDrive, Network,
-  Activity, ShieldCheck, Server, AlertCircle, Play, Layers, ExternalLink
+  Activity, ShieldCheck, Server, AlertCircle, Play, Layers, ExternalLink, Zap
 } from 'lucide-react'
 
 interface ServerDocModalProps {
@@ -31,7 +31,7 @@ export const ServerDocModal: React.FC<ServerDocModalProps> = ({ isOpen, onClose,
 }`
 
   const systemdServiceFile = `[Unit]
-Description=DeployOps Server Telemetry Monitoring Agent
+Description=MonitorDep Server Telemetry Monitoring Agent
 After=network.target
 
 [Service]
@@ -46,11 +46,11 @@ RestartSec=10
 WantedBy=multi-user.target`
 
   const systemdCommands = `sudo cp agent.py agent_config.json /opt/monitoring_agent/
-sudo nano /etc/systemd/system/deployops-agent.service
+sudo nano /etc/systemd/system/monitordep-agent.service
 sudo systemctl daemon-reload
-sudo systemctl enable deployops-agent
-sudo systemctl start deployops-agent
-sudo systemctl status deployops-agent`
+sudo systemctl enable monitordep-agent
+sudo systemctl start monitordep-agent
+sudo systemctl status monitordep-agent`
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-md animate-fadeIn font-sans">
@@ -64,86 +64,55 @@ sudo systemctl status deployops-agent`
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-300 font-mono">
-                  DEPLOYOPS // DOCUMENTATION
+                  MONITORDEP // DOCUMENTATION
                 </span>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
                   AGENT v2.4
                 </span>
               </div>
-              <h3 className="text-xl font-black text-white tracking-tight">
-                Server Monitoring Agent Integration Guide
-              </h3>
+              <h2 className="text-lg font-bold">Agent Installation & Deployment Guide</h2>
             </div>
           </div>
 
           <button
             onClick={onClose}
-            className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+            className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-slate-300 transition-all"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Tab Navigation Controls */}
-        <div className="flex items-center gap-2 p-3 bg-slate-50 dark:bg-slate-955 border-b border-slate-200 dark:border-slate-800 shrink-0 overflow-x-auto">
+        {/* Navigation Sub-Header Tabs */}
+        <div className="flex border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-955 px-6 shrink-0 text-xs font-semibold">
           <button
             onClick={() => setActiveTab('quick')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shrink-0 ${
+            className={`py-3.5 px-4 border-b-2 transition-all flex items-center gap-2 ${
               activeTab === 'quick'
-                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20'
-                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800'
+                ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400 font-bold'
+                : 'border-transparent text-slate-500 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
-            <Play className="w-3.5 h-3.5" />
-            <span>1. Quick Setup Guide</span>
+            <Zap className="w-4 h-4" /> Quick Overview & Token
           </button>
-
           <button
             onClick={() => setActiveTab('systemd')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shrink-0 ${
+            className={`py-3.5 px-4 border-b-2 transition-all flex items-center gap-2 ${
               activeTab === 'systemd'
-                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20'
-                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800'
+                ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400 font-bold'
+                : 'border-transparent text-slate-500 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
-            <Terminal className="w-3.5 h-3.5" />
-            <span>2. Linux Systemd Service</span>
+            <Terminal className="w-4 h-4" /> Linux Systemd Daemon
           </button>
-
           <button
             onClick={() => setActiveTab('windows')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shrink-0 ${
+            className={`py-3.5 px-4 border-b-2 transition-all flex items-center gap-2 ${
               activeTab === 'windows'
-                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20'
-                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800'
+                ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400 font-bold'
+                : 'border-transparent text-slate-500 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
-            <Server className="w-3.5 h-3.5" />
-            <span>3. Windows Service Setup</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('payload')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shrink-0 ${
-              activeTab === 'payload'
-                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20'
-                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800'
-            }`}
-          >
-            <Activity className="w-3.5 h-3.5" />
-            <span>4. Telemetry Payload</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('faq')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shrink-0 ${
-              activeTab === 'faq'
-                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20'
-                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800'
-            }`}
-          >
-            <AlertCircle className="w-3.5 h-3.5" />
-            <span>5. Troubleshooting</span>
+            <Server className="w-4 h-4" /> Windows Server Service
           </button>
         </div>
 
@@ -155,9 +124,9 @@ sudo systemctl status deployops-agent`
               <div className="p-4 rounded-2xl bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800/40 text-xs text-indigo-900 dark:text-indigo-200 leading-relaxed">
                 <p className="font-extrabold text-sm mb-1 text-indigo-950 dark:text-white flex items-center gap-2">
                   <ShieldCheck className="w-4 h-4 text-indigo-500" />
-                  What is DeployOps Agent?
+                  What is MonitorDep Agent?
                 </p>
-                DeployOps Monitoring Agent is a cross-platform (Linux, Windows, macOS) lightweight telemetry daemon written in Python. It captures Real-time CPU utilization, RAM usage, Swap space, Disk partitions, Network Bandwidth (Upload/Download rates), System Load Averages, Top 5 Consuming Processes, and System Services (Nginx, Redis, Gunicorn, Celery) every 15 seconds.
+                MonitorDep Monitoring Agent is a cross-platform (Linux, Windows, macOS) lightweight telemetry daemon written in Python. It captures Real-time CPU utilization, RAM usage, Swap space, Disk partitions, Network Bandwidth (Upload/Download rates), System Load Averages, Top 5 Consuming Processes, and System Services (Nginx, Redis, Gunicorn, Celery) every 15 seconds.
               </div>
 
               {/* Step 1 */}
@@ -384,7 +353,7 @@ sudo systemctl status deployops-agent`
 
         {/* Modal Footer */}
         <div className="p-4 bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between shrink-0">
-          <span className="text-xs text-slate-400 font-mono">DeployOps Agent Documentation v2.4</span>
+          <span className="text-xs text-slate-400 font-mono">MonitorDep Agent Documentation v2.4</span>
           <button
             onClick={onClose}
             className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow-md transition-all"
