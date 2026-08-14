@@ -417,7 +417,7 @@ export const TelegramSettings: React.FC<TelegramSettingsProps> = ({ apiBase, aut
             {/* Connection Status Content */}
             {connStatus?.is_verified ? (
               <div className="space-y-4">
-                <div className="p-4 rounded-2xl bg-sky-50/50 dark:bg-slate-955 border border-sky-100 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="p-4 rounded-2xl bg-sky-50/50 dark:bg-slate-950 border border-sky-100 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 rounded-2xl bg-[#24A1DE] text-white flex items-center justify-center font-black text-lg shadow-md shadow-sky-500/20">
                       {(connStatus.first_name?.[0] || connStatus.telegram_username?.[0] || 'T').toUpperCase()}
@@ -465,7 +465,7 @@ export const TelegramSettings: React.FC<TelegramSettingsProps> = ({ apiBase, aut
               </div>
             ) : (
               <div className="space-y-4">
-                <div className="p-6 rounded-2xl bg-gradient-to-br from-sky-50 to-white dark:from-slate-900 dark:to-slate-955 border border-sky-200 dark:border-slate-800 text-center space-y-4">
+                <div className="p-6 rounded-2xl bg-gradient-to-br from-sky-50 to-white dark:from-slate-900 dark:to-slate-950 border border-sky-200 dark:border-slate-800 text-center space-y-4">
                   <div className="w-14 h-14 rounded-2xl bg-[#24A1DE]/10 text-[#24A1DE] flex items-center justify-center mx-auto border border-[#24A1DE]/20">
                     <Send className="w-7 h-7" />
                   </div>
@@ -530,7 +530,7 @@ export const TelegramSettings: React.FC<TelegramSettingsProps> = ({ apiBase, aut
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="p-4 rounded-2xl bg-sky-50/50 dark:bg-slate-955 border border-sky-100 dark:border-slate-800 space-y-2">
+              <div className="p-4 rounded-2xl bg-sky-50/50 dark:bg-slate-950 border border-sky-100 dark:border-slate-800 space-y-2">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center justify-between">
                   <span>CPU Threshold</span>
                   <span className="font-mono text-[#24A1DE] font-extrabold">{config.cpu_threshold}%</span>
@@ -546,7 +546,7 @@ export const TelegramSettings: React.FC<TelegramSettingsProps> = ({ apiBase, aut
                 <p className="text-[10px] text-slate-400">Alerts when CPU usage exceeds {config.cpu_threshold}%</p>
               </div>
 
-              <div className="p-4 rounded-2xl bg-sky-50/50 dark:bg-slate-955 border border-sky-100 dark:border-slate-800 space-y-2">
+              <div className="p-4 rounded-2xl bg-sky-50/50 dark:bg-slate-950 border border-sky-100 dark:border-slate-800 space-y-2">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center justify-between">
                   <span>RAM Threshold</span>
                   <span className="font-mono text-[#24A1DE] font-extrabold">{config.ram_threshold}%</span>
@@ -562,7 +562,7 @@ export const TelegramSettings: React.FC<TelegramSettingsProps> = ({ apiBase, aut
                 <p className="text-[10px] text-slate-400">Alerts when RAM usage exceeds {config.ram_threshold}%</p>
               </div>
 
-              <div className="p-4 rounded-2xl bg-sky-50/50 dark:bg-slate-955 border border-sky-100 dark:border-slate-800 space-y-2">
+              <div className="p-4 rounded-2xl bg-sky-50/50 dark:bg-slate-950 border border-sky-100 dark:border-slate-800 space-y-2">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center justify-between">
                   <span>Disk Threshold</span>
                   <span className="font-mono text-[#24A1DE] font-extrabold">{config.disk_threshold}%</span>
@@ -631,7 +631,7 @@ export const TelegramSettings: React.FC<TelegramSettingsProps> = ({ apiBase, aut
                   type="text"
                   readOnly
                   value={webhookUrl}
-                  className="w-full px-3.5 py-2.5 bg-sky-50/50 dark:bg-slate-955 border border-sky-100 dark:border-slate-800 rounded-xl font-mono text-xs text-[#24A1DE] focus:outline-none"
+                  className="w-full px-3.5 py-2.5 bg-sky-50/50 dark:bg-slate-950 border border-sky-100 dark:border-slate-800 rounded-xl font-mono text-xs text-[#24A1DE] focus:outline-none"
                 />
                 <button
                   onClick={() => copyToClipboard(webhookUrl, setCopiedWebhook)}
@@ -643,7 +643,7 @@ export const TelegramSettings: React.FC<TelegramSettingsProps> = ({ apiBase, aut
               </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-sky-50/50 dark:bg-slate-955 border border-sky-100 dark:border-slate-800/80 text-xs text-slate-600 dark:text-slate-400 space-y-2">
+            <div className="p-4 rounded-2xl bg-sky-50/50 dark:bg-slate-950 border border-sky-100 dark:border-slate-800/80 text-xs text-slate-600 dark:text-slate-400 space-y-2">
               <h5 className="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
                 <Terminal className="w-4 h-4 text-[#24A1DE]" /> GitHub Webhook Setup Guide:
               </h5>
@@ -685,7 +685,7 @@ export const TelegramSettings: React.FC<TelegramSettingsProps> = ({ apiBase, aut
                     placeholder="deploymentmange_bot"
                     value={config.bot_username}
                     onChange={(e) => setConfig({ ...config, bot_username: e.target.value })}
-                    className="w-full pl-7 pr-3 py-2 bg-sky-50/50 dark:bg-slate-955 border border-sky-100 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:border-[#24A1DE] font-mono"
+                    className="w-full pl-7 pr-3 py-2 bg-sky-50/50 dark:bg-slate-950 border border-sky-100 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:border-[#24A1DE] font-mono"
                   />
                 </div>
               </div>
@@ -699,7 +699,7 @@ export const TelegramSettings: React.FC<TelegramSettingsProps> = ({ apiBase, aut
                   placeholder="123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ"
                   value={config.bot_token}
                   onChange={(e) => setConfig({ ...config, bot_token: e.target.value })}
-                  className="w-full px-3 py-2 bg-sky-50/50 dark:bg-slate-955 border border-sky-100 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:border-[#24A1DE] font-mono"
+                  className="w-full px-3 py-2 bg-sky-50/50 dark:bg-slate-950 border border-sky-100 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:border-[#24A1DE] font-mono"
                 />
                 <span className="text-[10px] text-slate-400 mt-1 block">
                   Obtained from Telegram @BotFather
@@ -746,7 +746,7 @@ export const TelegramSettings: React.FC<TelegramSettingsProps> = ({ apiBase, aut
                 {logs.slice(0, 10).map((log) => (
                   <div
                     key={log.id}
-                    className="p-2.5 rounded-xl bg-sky-50/50 dark:bg-slate-955 border border-sky-100 dark:border-slate-800/80 text-xs space-y-1"
+                    className="p-2.5 rounded-xl bg-sky-50/50 dark:bg-slate-950 border border-sky-100 dark:border-slate-800/80 text-xs space-y-1"
                   >
                     <div className="flex items-center justify-between">
                       <span className="font-bold text-slate-800 dark:text-slate-200 truncate max-w-[150px]">
@@ -799,7 +799,7 @@ export const TelegramSettings: React.FC<TelegramSettingsProps> = ({ apiBase, aut
 
             {/* Steps Container */}
             <div className="space-y-4">
-              <div className="p-4 rounded-2xl bg-sky-50/50 dark:bg-slate-955 border border-sky-100 dark:border-slate-800 flex items-start gap-3">
+              <div className="p-4 rounded-2xl bg-sky-50/50 dark:bg-slate-950 border border-sky-100 dark:border-slate-800 flex items-start gap-3">
                 <div className="w-7 h-7 rounded-xl bg-[#24A1DE] text-white flex items-center justify-center font-extrabold text-xs shrink-0 mt-0.5 shadow-sm">
                   1
                 </div>
@@ -813,7 +813,7 @@ export const TelegramSettings: React.FC<TelegramSettingsProps> = ({ apiBase, aut
                 </div>
               </div>
 
-              <div className="p-4 rounded-2xl bg-sky-50/50 dark:bg-slate-955 border border-sky-100 dark:border-slate-800 flex items-start gap-3">
+              <div className="p-4 rounded-2xl bg-sky-50/50 dark:bg-slate-950 border border-sky-100 dark:border-slate-800 flex items-start gap-3">
                 <div className="w-7 h-7 rounded-xl bg-[#24A1DE] text-white flex items-center justify-center font-extrabold text-xs shrink-0 mt-0.5 shadow-sm">
                   2
                 </div>
