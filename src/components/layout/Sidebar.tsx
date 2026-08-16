@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import {
   Activity,
+  LayoutGrid,
   Server as ServerIcon,
   Globe,
   Database as DatabaseIcon,
@@ -24,7 +25,7 @@ import { AWSAccount } from '../../types/aws'
 import { useAuth } from '../../hooks/useAuth'
 import { UserProfileModal } from '../../features/iam/components/UserProfileModal'
 
-export type TabType = 'servers' | 'websites' | 'databases' | 'github' | 'aws' | 'aws-costing' | 'telegram' | 'iam'
+export type TabType = 'dashboard' | 'servers' | 'websites' | 'databases' | 'github' | 'aws' | 'aws-costing' | 'telegram' | 'iam'
 
 interface SidebarProps {
   activeTab: TabType
@@ -144,10 +145,21 @@ const SidebarNavItems: React.FC<SidebarProps & { closeMobile?: () => void }> = (
   const safeGithubProjects = githubProjects || []
   const safeAWSAccounts = awsAccounts || []
 
+  const totalAllServices = safeServers.length + safeWebsites.length + safeDatabases.length + safeGithubProjects.length + safeAWSAccounts.length
+
   const allCategories = [
     {
-      id: 'servers' as const,
+      id: 'dashboard' as const,
       num: 1,
+      title: 'Overview Dashboard',
+      subtitle: 'All Services & 9 PM Reports',
+      icon: LayoutGrid,
+      count: totalAllServices,
+      onlineCount: totalAllServices
+    },
+    {
+      id: 'servers' as const,
+      num: 2,
       title: 'Servers Monitoring',
       subtitle: 'Infrastructure Nodes',
       icon: ServerIcon,
@@ -156,7 +168,7 @@ const SidebarNavItems: React.FC<SidebarProps & { closeMobile?: () => void }> = (
     },
     {
       id: 'websites' as const,
-      num: 2,
+      num: 3,
       title: 'Website Monitoring',
       subtitle: 'HTTP Uptime Probes',
       icon: Globe,
@@ -165,7 +177,7 @@ const SidebarNavItems: React.FC<SidebarProps & { closeMobile?: () => void }> = (
     },
     {
       id: 'databases' as const,
-      num: 3,
+      num: 4,
       title: 'Database Monitoring',
       subtitle: 'PostgreSQL, Supabase & DBs',
       icon: DatabaseIcon,
@@ -174,7 +186,7 @@ const SidebarNavItems: React.FC<SidebarProps & { closeMobile?: () => void }> = (
     },
     {
       id: 'github' as const,
-      num: 4,
+      num: 5,
       title: 'GitHub Monitoring',
       subtitle: 'Repositories & CI/CD',
       icon: Github,
@@ -183,7 +195,7 @@ const SidebarNavItems: React.FC<SidebarProps & { closeMobile?: () => void }> = (
     },
     {
       id: 'aws' as const,
-      num: 5,
+      num: 6,
       title: 'AWS Cloud Monitoring',
       subtitle: 'EC2, EBS, SG & CloudWatch',
       icon: Cloud,
@@ -192,7 +204,7 @@ const SidebarNavItems: React.FC<SidebarProps & { closeMobile?: () => void }> = (
     },
     {
       id: 'aws-costing' as const,
-      num: 6,
+      num: 7,
       title: 'AWS Costing & Billing',
       subtitle: 'Cost Explorer & Budgets',
       icon: DollarSign,
@@ -201,16 +213,16 @@ const SidebarNavItems: React.FC<SidebarProps & { closeMobile?: () => void }> = (
     },
     {
       id: 'telegram' as const,
-      num: 7,
+      num: 8,
       title: 'Telegram Notifications',
-      subtitle: 'Connect Bot, Alerts & Push',
+      subtitle: 'Connect Bot, Daily Reports & Alerts',
       icon: Send,
       count: 0,
       onlineCount: 0
     },
     {
       id: 'iam' as const,
-      num: 8,
+      num: 9,
       title: 'IAM & User Management',
       subtitle: 'Teams, Roles & Permissions',
       icon: ShieldCheck,
@@ -220,7 +232,10 @@ const SidebarNavItems: React.FC<SidebarProps & { closeMobile?: () => void }> = (
   ]
 
   // Filter tabs according to user permissions
-  const categories = allCategories.filter((cat) => hasPermission(cat.id === 'aws-costing' ? 'aws_costing' : (cat.id as any), 'read'))
+  const categories = allCategories.filter((cat) => {
+    if (cat.id === 'dashboard') return true
+    return hasPermission(cat.id === 'aws-costing' ? 'aws_costing' : (cat.id as any), 'read')
+  })
 
   const handleSelectService = (tabId: TabType) => {
     setActiveTab(tabId)

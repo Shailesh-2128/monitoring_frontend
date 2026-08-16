@@ -84,11 +84,31 @@ export const TelegramSettings: React.FC<TelegramSettingsProps> = ({ apiBase, aut
     notify_server_overload: true,
     notify_github_push: true
   })
+  const [dailyReportEnabled, setDailyReportEnabled] = useState(true)
+  const [dailyReportTime, setDailyReportTime] = useState('21:00')
+  const [reportConfigSaving, setReportConfigSaving] = useState(false)
+  const [previewModalOpen, setPreviewModalOpen] = useState(false)
+  const [previewContent, setPreviewContent] = useState('')
+  const [loadingPreviewText, setLoadingPreviewText] = useState(false)
+
   const [configSaving, setConfigSaving] = useState(false)
   const [actionLoading, setActionLoading] = useState<string | null>(null)
   const [alertMessage, setAlertMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
   const [logs, setLogs] = useState<NotificationLog[]>([])
   const [logsLoading, setLogsLoading] = useState(false)
+
+  const fetchReportConfig = useCallback(async () => {
+    try {
+      const res = await authFetch(`${apiBase}/api/telegram/daily-report/config/`)
+      if (res.ok) {
+        const data = await res.json()
+        setDailyReportEnabled(data.daily_report_enabled ?? true)
+        setDailyReportTime(data.daily_report_time || '21:00')
+      }
+    } catch (err) {
+      console.error("Failed to fetch report config:", err)
+    }
+  }, [apiBase, authFetch])
 
   // Fetch connection status
   const fetchConnectionStatus = useCallback(async () => {
@@ -139,8 +159,69 @@ export const TelegramSettings: React.FC<TelegramSettingsProps> = ({ apiBase, aut
   useEffect(() => {
     fetchConnectionStatus()
     fetchConfig()
+    fetchReportConfig()
     fetchLogs()
-  }, [fetchConnectionStatus, fetchConfig, fetchLogs])
+  }, [fetchConnectionStatus, fetchConfig, fetchReportConfig, fetchLogs])
+
+  const handleSaveReportConfig = async () => {
+    setReportConfigSaving(true)
+    setAlertMessage(null)
+    try {
+      const res = await authFetch(`${apiBase}/api/telegram/daily-report/config/`, {
+        method: 'POST',
+        body: JSON.stringify({
+          daily_report_enabled: dailyReportEnabled,
+          daily_report_time: dailyReportTime
+        })
+      })
+      if (res.ok) {
+        setAlertMessage({ type: 'success', text: `Daily Health Report schedule saved! Running daily at ${dailyReportTime}.` })
+      } else {
+        setAlertMessage({ type: 'error', text: 'Failed to update daily report schedule.' })
+      }
+    } catch (err: any) {
+      setAlertMessage({ type: 'error', text: err.message || 'Error updating report settings.' })
+    } finally {
+      setReportConfigSaving(false)
+    }
+  }
+
+  const handleSendDailyReportNow = async () => {
+    setActionLoading('daily-report-send')
+    setAlertMessage(null)
+    try {
+      const res = await authFetch(`${apiBase}/api/telegram/daily-report/send/`, { method: 'POST' })
+      const data = await res.json()
+      if (res.ok) {
+        setAlertMessage({ type: 'success', text: data.message })
+        fetchLogs()
+      } else {
+        setAlertMessage({ type: 'error', text: data.error || 'Failed to dispatch daily report.' })
+      }
+    } catch (err: any) {
+      setAlertMessage({ type: 'error', text: err.message || 'Error sending daily report.' })
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
+  const handlePreviewDailyReport = async () => {
+    setPreviewModalOpen(true)
+    setLoadingPreviewText(true)
+    try {
+      const res = await authFetch(`${apiBase}/api/telegram/daily-report/preview/`)
+      if (res.ok) {
+        const data = await res.json()
+        setPreviewContent(data.formatted_text || '')
+      } else {
+        setPreviewContent('Error generating report preview.')
+      }
+    } catch (err) {
+      setPreviewContent('Failed to fetch preview.')
+    } finally {
+      setLoadingPreviewText(false)
+    }
+  }
 
   // Polling connection status when modal is open
   useEffect(() => {
@@ -496,6 +577,94 @@ export const TelegramSettings: React.FC<TelegramSettingsProps> = ({ apiBase, aut
                 </div>
               </div>
             )}
+          </div>
+
+          {/* Card 1.5: Daily Service Health Report Settings (9:00 PM Schedule) */}
+          <div className="bg-white dark:bg-slate-900 border border-sky-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm space-y-5">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center font-bold">
+                  <Zap className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-extrabold text-base text-slate-900 dark:text-white">
+                    Daily 9:00 PM Service Health Report
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                    Automated daily report summarizing all server statuses, websites, databases & services
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handlePreviewDailyReport}
+                  className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 text-xs font-semibold flex items-center gap-1.5 transition-all"
+                >
+                  <Bot className="w-3.5 h-3.5 text-[#24A1DE]" />
+                  Preview Report
+                </button>
+
+                <button
+                  onClick={handleSendDailyReportNow}
+                  disabled={actionLoading === 'daily-report-send'}
+                  className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold flex items-center gap-1.5 transition-all shadow-sm disabled:opacity-50"
+                >
+                  {actionLoading === 'daily-report-send' ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    <Send className="w-3.5 h-3.5" />
+                  )}
+                  Send 9 PM Report Now
+                </button>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-4 rounded-2xl bg-sky-50/50 dark:bg-slate-950 border border-sky-100 dark:border-slate-800 flex items-center justify-between">
+                <div>
+                  <h5 className="text-xs font-bold text-slate-800 dark:text-slate-200">Daily Automated Dispatch</h5>
+                  <p className="text-[10px] text-slate-400">Send complete health report to verified subscribers every day</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setDailyReportEnabled(!dailyReportEnabled)}
+                  className={`w-11 h-6 rounded-full transition-colors relative p-0.5 ${
+                    dailyReportEnabled ? 'bg-emerald-600' : 'bg-slate-300 dark:bg-slate-700'
+                  }`}
+                >
+                  <div
+                    className={`w-5 h-5 rounded-full bg-white transition-transform ${
+                      dailyReportEnabled ? 'translate-x-5' : 'translate-x-0'
+                    }`}
+                  />
+                </button>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-sky-50/50 dark:bg-slate-950 border border-sky-100 dark:border-slate-800 flex items-center justify-between">
+                <div>
+                  <h5 className="text-xs font-bold text-slate-800 dark:text-slate-200">Scheduled Dispatch Time</h5>
+                  <p className="text-[10px] text-slate-400">Default: 21:00 (9:00 PM local/server time)</p>
+                </div>
+                <input
+                  type="time"
+                  value={dailyReportTime}
+                  onChange={(e) => setDailyReportTime(e.target.value)}
+                  className="px-3 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-mono font-bold text-slate-900 dark:text-white focus:outline-none"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end">
+              <button
+                onClick={handleSaveReportConfig}
+                disabled={reportConfigSaving}
+                className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-extrabold flex items-center gap-1.5 shadow-md transition-all"
+              >
+                {reportConfigSaving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CheckCircle2 className="w-3.5 h-3.5" />}
+                Save Report Schedule
+              </button>
+            </div>
           </div>
 
           {/* Card 2: Server Overload Notification Triggers */}
@@ -857,6 +1026,63 @@ export const TelegramSettings: React.FC<TelegramSettingsProps> = ({ apiBase, aut
                 )}
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Daily Report Preview Modal */}
+      {previewModalOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-2xl w-full p-6 space-y-4 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center">
+                  <Zap className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-base text-slate-900 dark:text-white">Daily 9:00 PM Telegram Report Preview</h3>
+                  <p className="text-[11px] text-slate-400">Live preview of daily infrastructure health status message</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setPreviewModalOpen(false)}
+                className="p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {loadingPreviewText ? (
+              <div className="p-12 text-center text-slate-400 space-y-3">
+                <Loader2 className="w-6 h-6 animate-spin mx-auto text-emerald-500" />
+                <p className="text-xs">Generating report preview...</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="bg-slate-950 text-slate-100 p-4 rounded-2xl font-mono text-xs overflow-x-auto leading-relaxed border border-slate-800 max-h-[380px] overflow-y-auto whitespace-pre-wrap">
+                  {previewContent}
+                </div>
+
+                <div className="flex items-center justify-end gap-2 pt-2">
+                  <button
+                    onClick={() => setPreviewModalOpen(false)}
+                    className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-semibold"
+                  >
+                    Close Preview
+                  </button>
+                  <button
+                    onClick={() => {
+                      setPreviewModalOpen(false)
+                      handleSendDailyReportNow()
+                    }}
+                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5"
+                  >
+                    <Send className="w-3.5 h-3.5" />
+                    <span>Send to Telegram Now</span>
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}

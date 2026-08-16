@@ -18,6 +18,7 @@ const ProjectDetails = lazy(() => import('../features/github/components/ProjectD
 const AWSDetails = lazy(() => import('../features/aws/components/AWSDetails').then(m => ({ default: m.AWSDetails })))
 const AWSCostingDetails = lazy(() => import('../features/aws-costing/components/AWSCostingDetails').then(m => ({ default: m.AWSCostingDetails })))
 const TelegramSettings = lazy(() => import('../features/telegram/TelegramSettings').then(m => ({ default: m.TelegramSettings })))
+const OverviewDashboard = lazy(() => import('../features/dashboard/OverviewDashboard').then(m => ({ default: m.OverviewDashboard })))
 
 // Modal Feature Components
 import { AddServerModal } from '../features/servers/components/AddServerModal'
@@ -65,7 +66,7 @@ import { API_BASE } from '../config'
 
 function App() {
   const { token, logout } = useAuth()
-  const [activeTab, setActiveTab] = useState<TabType>('servers')
+  const [activeTab, setActiveTab] = useState<TabType>('dashboard')
   const [isServerDocOpen, setIsServerDocOpen] = useState(false)
 
   const authFetch = useCallback(async (url: string, options: RequestInit = {}) => {
@@ -1194,7 +1195,29 @@ function App() {
         }
       >
         <Suspense fallback={<DetailsSkeleton />}>
-          {activeTab === 'iam' ? (
+          {activeTab === 'dashboard' ? (
+            <OverviewDashboard
+              servers={servers}
+              websites={websites}
+              databases={databases}
+              githubProjects={githubProjects}
+              awsAccounts={awsAccounts}
+              authFetch={authFetch}
+              onSelectTab={(tab) => setActiveTab(tab)}
+              onSelectServer={(id) => {
+                setActiveTab('servers')
+                setSelectedServerId(id)
+              }}
+              onSelectWebsite={(id) => {
+                setActiveTab('websites')
+                setSelectedWebsiteId(id)
+              }}
+              onSelectDatabase={(id) => {
+                setActiveTab('databases')
+                setSelectedDatabaseId(id)
+              }}
+            />
+          ) : activeTab === 'iam' ? (
             <UserManagement />
           ) : activeTab === 'telegram' ? (
             <TelegramSettings apiBase={API_BASE} authFetch={authFetch} />
