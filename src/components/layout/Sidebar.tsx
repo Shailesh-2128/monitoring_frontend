@@ -62,7 +62,7 @@ export const Sidebar: React.FC<SidebarProps> = (props) => {
             <Activity className="w-4 h-4" />
           </div>
           <span className="font-extrabold text-base text-slate-900 dark:text-white tracking-tight">
-            MonitorDep
+            monitorInfra
           </span>
         </div>
 
@@ -90,7 +90,7 @@ export const Sidebar: React.FC<SidebarProps> = (props) => {
                 <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center text-white">
                   <Activity className="w-4 h-4" />
                 </div>
-                <span className="font-bold text-base text-slate-900 dark:text-white">MonitorDep</span>
+                <span className="font-bold text-base text-slate-900 dark:text-white">monitorInfra</span>
               </div>
               <button
                 onClick={() => setMobileOpen(false)}
@@ -275,7 +275,7 @@ const SidebarNavItems: React.FC<SidebarProps & { closeMobile?: () => void }> = (
           </div>
           <div>
             <h1 className="font-extrabold text-base leading-tight tracking-tight text-slate-900 dark:text-white">
-              MonitorDep
+              monitorInfra
             </h1>
             <span className="text-[10px] text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-widest">
               Monitoring Suite

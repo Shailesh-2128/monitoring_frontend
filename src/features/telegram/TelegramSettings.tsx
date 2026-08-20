@@ -959,7 +959,7 @@ export const TelegramSettings: React.FC<TelegramSettingsProps> = ({ apiBase, aut
                 <Send className="w-8 h-8" />
               </div>
               <h3 className="text-xl font-extrabold text-slate-900 dark:text-white">
-                Connect MonitorDep Telegram Bot
+                Connect monitorInfra Telegram Bot
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400">
                 Follow the 2 simple steps below to link your Telegram chat

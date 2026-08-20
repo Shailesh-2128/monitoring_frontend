@@ -86,7 +86,7 @@ export const LoginPage: React.FC = () => {
             <Activity className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
           </div>
           <span className="font-extrabold text-lg sm:text-xl text-slate-900 tracking-tight">
-            MonitorDep
+            monitorInfra
           </span>
           <span className="hidden sm:inline-block px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-purple-100 text-purple-700 border border-purple-200 ml-1">
             v2.4.0
@@ -192,7 +192,7 @@ export const LoginPage: React.FC = () => {
                 Welcome back
               </h2>
               <p className="text-xs sm:text-sm text-slate-500 mt-1">
-                Sign in to your <span className="text-purple-600 font-bold">MonitorDep</span> workspace
+                Sign in to your <span className="text-purple-600 font-bold">monitorInfra</span> workspace
               </p>
             </div>
 
@@ -286,7 +286,7 @@ export const LoginPage: React.FC = () => {
                   href="#forgot-password"
                   onClick={(e) => {
                     e.preventDefault()
-                    setError('Please contact your MonitorDep administrator to reset credentials.')
+                    setError('Please contact your monitorInfra administrator to reset credentials.')
                   }}
                   className="text-purple-600 hover:text-purple-700 transition-colors font-extrabold"
                 >
@@ -333,7 +333,7 @@ export const LoginPage: React.FC = () => {
 
       {/* Page Footer */}
       <footer className="relative z-10 px-4 sm:px-8 md:px-12 py-3 sm:py-4 text-center text-xs text-slate-500 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-2 shrink-0">
-        <span>&copy; {new Date().getFullYear()} MonitorDep Platform Inc. All rights reserved.</span>
+        <span>&copy; {new Date().getFullYear()} monitorInfra Platform Inc. All rights reserved.</span>
         <div className="flex items-center gap-6">
           <a href="#privacy" className="hover:text-slate-700 transition-colors">Privacy Policy</a>
           <a href="#terms" className="hover:text-slate-700 transition-colors">Terms of Service</a>

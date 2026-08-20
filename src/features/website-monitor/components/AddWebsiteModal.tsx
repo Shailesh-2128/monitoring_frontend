@@ -121,7 +121,7 @@ export const AddWebsiteModal: React.FC<AddWebsiteModalProps> = ({
             <div className="p-3.5 bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800/60 rounded-xl text-xs text-indigo-900 dark:text-indigo-200 flex gap-2.5">
               <ShieldAlert className="w-5 h-5 text-indigo-600 dark:text-indigo-400 shrink-0 mt-0.5" />
               <p className="leading-relaxed">
-                Website monitors probe target endpoints directly from the MonitorDep backend server. Check logs record SSL expiries, latencies, and redirect locations.
+                Website monitors probe target endpoints directly from the monitorInfra backend server. Check logs record SSL expiries, latencies, and redirect locations.
               </p>
             </div>
 

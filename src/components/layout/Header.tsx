@@ -206,7 +206,7 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             onClick={onOpenServerDocs}
             className="p-2 sm:px-3 sm:py-1.5 bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-900/60 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-600 dark:text-indigo-300 text-xs font-semibold rounded-xl transition-all flex items-center gap-1.5"
-            title="MonitorDep Agent Setup Guide"
+            title="monitorInfra Agent Setup Guide"
           >
             <BookOpen className="w-4 h-4 text-indigo-500 shrink-0" />
             <span className="hidden md:inline">Agent Setup Guide</span>

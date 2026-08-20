@@ -31,7 +31,7 @@ export const ServerDocModal: React.FC<ServerDocModalProps> = ({ isOpen, onClose,
 }`
 
   const systemdServiceFile = `[Unit]
-Description=MonitorDep Server Telemetry Monitoring Agent
+Description=monitorInfra Server Telemetry Monitoring Agent
 After=network.target
 
 [Service]
@@ -46,11 +46,11 @@ RestartSec=10
 WantedBy=multi-user.target`
 
   const systemdCommands = `sudo cp agent.py agent_config.json /opt/monitoring_agent/
-sudo nano /etc/systemd/system/monitordep-agent.service
+sudo nano /etc/systemd/system/monitorinfra-agent.service
 sudo systemctl daemon-reload
-sudo systemctl enable monitordep-agent
-sudo systemctl start monitordep-agent
-sudo systemctl status monitordep-agent`
+sudo systemctl enable monitorinfra-agent
+sudo systemctl start monitorinfra-agent
+sudo systemctl status monitorinfra-agent`
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-md animate-fadeIn font-sans">
@@ -64,7 +64,7 @@ sudo systemctl status monitordep-agent`
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-300 font-mono">
-                  MONITORDEP // DOCUMENTATION
+                  MONITORINFRA // DOCUMENTATION
                 </span>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
                   AGENT v2.4
@@ -124,9 +124,9 @@ sudo systemctl status monitordep-agent`
               <div className="p-4 rounded-2xl bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800/40 text-xs text-indigo-900 dark:text-indigo-200 leading-relaxed">
                 <p className="font-extrabold text-sm mb-1 text-indigo-950 dark:text-white flex items-center gap-2">
                   <ShieldCheck className="w-4 h-4 text-indigo-500" />
-                  What is MonitorDep Agent?
+                  What is monitorInfra Agent?
                 </p>
-                MonitorDep Monitoring Agent is a cross-platform (Linux, Windows, macOS) lightweight telemetry daemon written in Python. It captures Real-time CPU utilization, RAM usage, Swap space, Disk partitions, Network Bandwidth (Upload/Download rates), System Load Averages, Top 5 Consuming Processes, and System Services (Nginx, Redis, Gunicorn, Celery) every 15 seconds.
+                monitorInfra Monitoring Agent is a cross-platform (Linux, Windows, macOS) lightweight telemetry daemon written in Python. It captures Real-time CPU utilization, RAM usage, Swap space, Disk partitions, Network Bandwidth (Upload/Download rates), System Load Averages, Top 5 Consuming Processes, and System Services (Nginx, Redis, Gunicorn, Celery) every 15 seconds.
               </div>
 
               {/* Step 1 */}
@@ -353,7 +353,7 @@ sudo systemctl status monitordep-agent`
 
         {/* Modal Footer */}
         <div className="p-4 bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between shrink-0">
-          <span className="text-xs text-slate-400 font-mono">MonitorDep Agent Documentation v2.4</span>
+          <span className="text-xs text-slate-400 font-mono">monitorInfra Agent Documentation v2.4</span>
           <button
             onClick={onClose}
             className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow-md transition-all"
